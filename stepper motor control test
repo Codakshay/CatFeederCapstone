@@ -1,17 +1,49 @@
 import RPi.GPIO as GPIO
 import time
 
+# Pin Definitions
+IN1 = 17
+IN2 = 18
+IN3 = 22
+IN4 = 23
+
+# Setup GPIO
 GPIO.setmode(GPIO.BCM)
-ControlPin = [14, 15, 18, 23]
+GPIO.setup(IN1, GPIO.OUT)
+GPIO.setup(IN2, GPIO.OUT)
+GPIO.setup(IN3, GPIO.OUT)
+GPIO.setup(IN4, GPIO.OUT)
 
-for pin in ControlPin:
-    GPIO.setup(pin, GPIO.OUT)
+# Stepper motor sequence (full-step)
+sequence = [
+    [1, 0, 0, 1],
+    [1, 0, 0, 0],
+    [1, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 1, 0],
+    [0, 0, 1, 0],
+    [0, 0, 1, 1],
+    [0, 0, 0, 1]
+]
 
-# Test a single step
-GPIO.output(14, GPIO.HIGH)
-GPIO.output(15, GPIO.LOW)
-GPIO.output(18, GPIO.LOW)
-GPIO.output(23, GPIO.LOW)
-time.sleep(1)
+def step_motor(step):
+    GPIO.output(IN1, sequence[step][0])
+    GPIO.output(IN2, sequence[step][1])
+    GPIO.output(IN3, sequence[step][2])
+    GPIO.output(IN4, sequence[step][3])
 
-GPIO.cleanup()
+def rotate_motor(steps, delay):
+    for _ in range(steps):
+        for step in range(8):
+            step_motor(step)
+            time.sleep(delay)
+
+try:
+    while True:
+        print("Rotating motor...")
+        rotate_motor(100, 0.01)  # Rotate 100 steps with 10ms delay (slower)
+        time.sleep(1)  # Wait for 1 second
+        
+
+except KeyboardInterrupt:
+    GPIO.cleanup()
