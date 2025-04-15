@@ -9,8 +9,13 @@ interface Feeder {
   baseUrl: string;
 }
 
+type feedEntry = {
+  timestamp:string;
+  feeder:string;
+};
+
 const feeders: Feeder[] = [
-  { id: "feeder1", name: "Feeder 1", baseUrl: "http://10.0.0.25:3000" },
+  { id: "feeder1", name: "Feeder 1", baseUrl: "http://172.16.11.106:3000" },
   { id: "feeder2", name: "Feeder 2", baseUrl: "http://10.0.0.16:3000" },
 ];
 
@@ -39,7 +44,7 @@ export default function Controls() {
   // Feeder selection state.
   const [selectedFeeder, setSelectedFeeder] = useState<Feeder>(feeders[0]);
   const [brightness, setBrightness] = useState(0);
-  const [feedingHistory, setFeedingHistory] = useState<string[]>([]);
+  const [feedingHistory, setFeedingHistory] = useState<feedEntry[]>([]);
 
   // Daily schedule: keys are "HH:MM" (24-hour format), one per hour.
   const [hourSchedule, setHourSchedule] = useState<Record<string, boolean>>(() => {
@@ -67,15 +72,45 @@ export default function Controls() {
     }
   };
 
+  async function appendFeedingHistory(timestamp: string, feeder: string) {
+    const response = await fetch('/api/feedhistory', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({timestamp, feeder })
+    });
+  
+    const data = await response.json();
+    console.log(data);
+  }
+
+  async function getFeedingHistory() {
+    const response = await fetch('/api/feedhistory');
+    const data = await response.json();
+    setFeedingHistory(data.items); // [{ timestamp, feeder }, ...]
+  }
+
   // Log the dispensing action.
   const logDispense = () => {
     const timestamp = new Date().toLocaleTimeString([], {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
       hour: "numeric",
       minute: "2-digit",
       second: "2-digit",
     });
-    setFeedingHistory((prev) => [timestamp, ...prev]);
+     const newEntry = {timestamp:new Date().toISOString(), feeder:`${selectedFeeder.name}`};
+     setFeedingHistory(prev => [newEntry, ...prev]);
+    appendFeedingHistory(newEntry.timestamp,newEntry.feeder);
+    //appendFeedingHistory(new Date().toISOString(),`${selectedFeeder.name}`);
   };
+  
+  // Fetch history items when component loads
+  useEffect(() => {
+    getFeedingHistory();
+  }, []);
 
   // Dispense: Turn motor on then off after 3 seconds.
   const dispense = () => {
@@ -133,9 +168,19 @@ export default function Controls() {
     setCustomTimes((prev) => [...prev, time24]);
   };
 
+  async function clearFeedingHistory() {
+    const response = await fetch('/api/feedhistory', {
+      method: 'DELETE',
+    });
+  
+    const data = await response.json();
+    console.log(data);
+  }
+
   // Clear the feeding history.
   const clearHistory = () => {
     setFeedingHistory([]);
+    clearFeedingHistory();
   };
 
   // Options for dropdowns.
@@ -351,7 +396,9 @@ export default function Controls() {
               <ul className="max-h-40 overflow-y-auto space-y-1 border border-orange-200 p-2 rounded">
                 {feedingHistory.map((entry, index) => (
                   <li key={index} className="text-sm text-orange-800">
-                    {entry}
+                    {entry.timestamp}
+                    {entry.feeder}
+
                   </li>
                 ))}
               </ul>
@@ -380,7 +427,7 @@ export default function Controls() {
           </h3>
           <div className="w-full h-80 bg-orange-200 rounded-lg flex items-center justify-center border border-orange-400">
             <img
-              src="http://10.0.0.25:8080/mjpeg"
+              src="http://172.16.11.106:8080/mjpeg"
               alt="Live Camera Feed"
               className="w-full h-full object-cover rounded-lg"
             />
