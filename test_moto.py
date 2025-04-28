@@ -39,7 +39,7 @@ def rotate_motor(steps, delay):
 if __name__ == "__main__":
     try:
         print("Rotating motor...")
-        rotate_motor(50, 0.01)  # Rotate 50 cycles with 10ms delay between steps
+        rotate_motor(500, 0.01)  # Rotate 50 cycles with 10ms delay between steps
     except KeyboardInterrupt:
         pass
     finally:

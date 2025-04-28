@@ -1158,3 +1158,403 @@ git commit -m test
 git remote add origin https://github.com/Codakshay/CatFeederCapstone
 git push
 git push -u origin main
+cd catfeeder/
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+find ~ -name feedHistory.txt
+cd .
+cd ./
+cd ..
+find  -name feedHistory.txt
+pwd
+rm -rf .next
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+cd ..
+cd camera-app
+python app.py
+cd speaker
+python app.py
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+sudo systemctl restart
+Hostname -I
+Hostname -l
+Hostname -1
+Hostname -i
+Hostname -l
+npm run dev
+cd camera-ap
+cd camera-app
+python app.py
+cd speaker
+python app.py
+cd catfeeder
+npm run dev
+cd speaker
+python app.py
+cd catfeeder
+npm run dev
+cd speaker
+python app.py
+cd -
+source venv/bin/activate
+source env/bin/activate
+cd speaker
+python app.py
+cd catfeeder
+npm run dev
+cd -
+cd speaker
+python app.py
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 sudo nmtui
+cd speaker
+ls
+cd ..
+ls
+nano start-catfeeder.sh
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+journalct1 -u catfeeder.service -f
+sudo systemctl status catfeeder.service
+cd 
+ls
+nano start-catfeeder.sh
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+chmod +x /home/CatFeeder/start-catfeeder.sh
+sudo nano /etc/systemd/system/dispenser.service 
+ls
+cd
+ls
+cd env
+ls
+nano pyvenv,cfg
+cd lib
+ls
+cd python3.11
+ls
+cd site-packages
+ls
+cd 
+sudo nano /etc/systemd/system/dispenser.service
+/home/CatFeeder/start-dispenser.sh
+nano start-catfeeder.sh
+chmod +x /home/CatFeeder/start-dispenser.sh
+chmod +x /home/CatFeeder/start-catfeederr.sh
+chmod +x /home/CatFeeder/start-catfeeder.sh
+sudo nano /etc/systemd/system/dispenser.service
+sudo systemctl daemon-reload
+sudo systemctl enable dispenser.service
+sudo systemctl restart dispenser.service
+sudo journalctl -u dispenser.service -f
+rm -rf .next
+npm run build
+sudo systemctl restart dispenser.service
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart dispenser.service
+ls
+ls
+python test_moto.py
+hostname -I
+ls
+cd camera-app
+ls
+nano app.py
+cd ..
+ls
+cd catfeeder
+ls
+cd src
+ls
+cd app
+ls
+nano pages.tsx
+nano page.tsx
+cd ..
+cd src
+ls
+cd components
+ls
+cd controlsTest.tsx
+nano controlsTest.tsx
+cd ..
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+nano /home/CatFeeder/start-catfeeder.sh
+cd ..
+ls
+cd speaker
+ls
+cd ..
+nano /home/CatFeeder/start-catfeeder.sh
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+cd ..
+ls
+cd speaker
+nano app.py
+ls
+cd sounds
+ls
+cd ..
+ls
+cd ..
+cd catfeeder
+cd src
+cd components
+nano controlsTest.tsx
+cd ..
+cd 
+cd speaker
+nano app.py
+rm -rf .next
+npm run build
+sudo systemctl restart dispenser.service
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart dispenser.service
+ifconfig  # or `ipconfig` on Windows
+cd
+ping 172.20.10.2
+ls
+python test_moto.py
+crontab -e
+python /home/CatFeeder/.vscode-server/extensions/ms-python.python-2025.4.0/python_files/printEnvVariablesToFile.py /home/CatFeeder/.vscode-server/extensions/ms-python.python-2025.4.0/python_files/deactivate/bash/envVars.txt
+pip install flask-cors
+source env/bin/activate
+pip install flask-cors
+cd ~/speaker
+python3 -m venv venv
+deactivate
+activate
+source venv/bin/activate
+pip install flask-cors
+pip install flask
+deactivae
+deactivate
+cd
+cd catfeeder
+sudo systemctl restart catfeeder.service
+sudo lsof -i :3000
+ps aux | grep node
+pkill -f node
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+npm run dev
+npm run build
+source deactivate/env
+cd -
+source deactivate/env
+cd catfeeder
+rm -rf .next npm run build sudo systemctl restart catfeeder.service
+rm -rf .nextnpm run build sudo systemctl restart catfeeder.service
+rm -rf .next
+rm -rf .next npm run build 
+rm -rf .next
+npm run build
+clear
+cd -
+deactivate
+cd catefeeder
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart
+sudo systemctl restart catfeeder.service
+sudo systemctl status catfeeder.service
+bash /home/CatFeeder/start-catfeeder.sh
+cd -
+ls
+sudo nano /etc/systemd/system/dispenser.service 
+rm -rf .next
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+sudo systemctl status catfeeder.service
+sudo nano /etc/systemd/system/catfeeder.service 
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl restart catfeeder.service
+sudo systemctl status catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+sudo systemctl daemon-reload
+sudo systemctl restart catfeeder.service
+journalctl -u catfeeder.service --since "10 minutes ago"
+sudo lsof -i :3000
+sudo apt update
+sudo apt install lsof
+sudo lsof -i :3000
+sudo systemctl restart catfeeder.service
+sudo systemctl daemon-reload
+sudo systemctl restart catfeeder.service
+sudo systemctl status catfeeder.service
+sudo systemctl daemon-reload
+sudo systemctl restart catfeeder.service
+sudo systemctl status catfeeder.service
+journalctl -u catfeeder.service -n 50 --no-pager
+sudo pip3 install flask
+cd-
+cd - 
+sudo pip3 install flask
+cd speaker
+ls
+env
+cd env
+ls
+cd ~/speaker
+source env/bin/activate
+pip install flask
+deactivate
+source ~/speaker/env/bin/activate
+pip install flask --break-system-packages
+deactivate
+cd
+cd catfeeder
+sudo systemctl restart catfeeder.service
+sudo systemctl status catfeeder.service
+hostname -I
+sudo lsof -iTCP:3000 -sTCP:LISTEN
+journalctl -u catfeeder.service -n 50 --no-pager
+source /home/CatFeeder/speaker/env/bin/activate
+pip install flask-cors
+deactivate
+cd
+cd speaker
+CatFeeder@raspberrypi:~/catfeeder $ source /home/CatFeeder/speaker/env/bin/activate
+pip install flask-cors
+deactivate
+error: externally-managed-environment
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+CatFeeder@raspberrypi:~/catfeeder $ 
+deactivage
+deactivate
+rm -rf .next
+npm run build
+cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+sudo lsof -i :3000
+journalctl -u catfeeder.service -n 50 --no-pager
+cd
+cd speaker
+source venv/bin/activate
+pip install pygame
+deactivate
+cd
+cd catfeeder
+sudo systemctl restart catfeeder.service
+journalctl -u catfeeder.service -n 50 --no-pager
+sudo lsof -i :3000
+sudo lsof -i :5001
+sudo kill -9 11172
+sudo systemctl restart catfeeder.service
+journalctl -u catfeeder.service -n 50 --no-pager
+sudo lsof -i :3000
+sudo reboot
+sudo nano /boot/firmware/config.txt
+sudo reboot
+sudo nano /boot/firmware/config.txt
+sudo reboot
+watch -n 2 vcgencmd measure_temp
+                                                                                                                                                                                                                                                                                 cd catfeeder
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+hostname -i
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+ls
+sudo systemctl status catfeeder.service
+cd src
+cd components
+ls
+nano controlsTest.tsx
+cd ..
+rm -rf .next
+npm run build
+sudo systemctl restart catfeeder.service
+cd ..
+ls
+cd gpio
+ls
+python main.py
+python main.py 500 .009
+cd ..
+cd catfeeder
+npm run build

@@ -17,7 +17,7 @@ export async function PUT(
   const pythonPath = '/usr/bin/python3';
 
   return await new Promise((resolve) => {
-    const pyProcess = spawn(pythonPath, [scriptPath, brightnessValue.toString(), '0.01']);
+    const pyProcess = spawn(pythonPath, [scriptPath, '1000', '0.01']);
 
     let output = '';
     let errorOutput = '';

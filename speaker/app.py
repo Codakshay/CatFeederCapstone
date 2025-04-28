@@ -1,15 +1,18 @@
-from flask import Flask, jsonify, request
 import os
-import subprocess
+import time
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+from pygame import mixer
+import urllib.parse
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins temporarily
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# Use absolute path for reliability
-SOUND_DIR = os.path.abspath("./sounds")
+# Directory where your sound files are stored
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+SOUND_DIR = os.path.join(SCRIPT_DIR, "sounds")
 
-# Ensure the sounds directory exists
+# Create the sounds directory if it doesn't exist
 if not os.path.exists(SOUND_DIR):
     os.makedirs(SOUND_DIR)
     print(f"Created sounds directory at {SOUND_DIR}")
@@ -17,56 +20,38 @@ if not os.path.exists(SOUND_DIR):
 @app.route("/api/get-sounds", methods=["GET"])
 def get_sounds():
     try:
-        files = [f for f in os.listdir(SOUND_DIR) 
-                if f.endswith(('.wav', '.mp3', '.ogg'))]  # Only audio files
-        # Remove extensions for cleaner frontend display
+        files = [f for f in os.listdir(SOUND_DIR) if f.endswith(('.mp3', '.wav', '.ogg'))]
         sound_names = [os.path.splitext(f)[0] for f in files]
-        if not files:
-            return jsonify({"error": "No sound files found in the directory"}), 404
-        return jsonify({"sounds": sound_names})
+        return jsonify({"sounds": sound_names, "message": "Success"})
     except Exception as e:
-        print(f"Error fetching sounds: {str(e)}")  # Log error
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/play-sound/<sound>", methods=["POST"])
-def play_sound(sound):
-    # Find the actual file with any supported extension
-    matching_files = [f for f in os.listdir(SOUND_DIR) 
-                    if f.startswith(sound) and f.endswith(('.wav', '.mp3', '.ogg'))]
-    
-    if not matching_files:
-        return jsonify({"error": "Sound file not found"}), 404
-    
-    sound_file = matching_files[0]  # Take the first match
-    sound_path = os.path.join(SOUND_DIR, sound_file)
-
+@app.route("/api/play-sound/<sound_name>", methods=["POST"])
+def play_sound(sound_name):
     try:
-        # Determine appropriate player
-        if sound_file.endswith(".mp3"):
-            command = ["mpg123", "-q", sound_path]  # -q for quiet mode
+        # Decode the sound_name in case of special characters in the URL
+        sound_name = urllib.parse.unquote(sound_name)
+
+        # Try multiple extensions
+        for ext in [".mp3", ".wav", ".ogg"]:
+            sound_path = os.path.join(SOUND_DIR, f"{sound_name}{ext}")
+            if os.path.exists(sound_path):
+                break
         else:
-            command = ["aplay", "-q", sound_path]  # -q for quiet mode
-        
-        # Run in background so it doesn't block the API response
-        subprocess.Popen(command)
-        print(f"Playing sound: {sound_file}")  # Log that the sound is being played
-        return jsonify({"message": f"Playing {sound_file}"}), 200
-    except Exception as e:
-        print(f"Failed to play sound: {str(e)}")  # Log error
-        return jsonify({"error": f"Failed to play sound: {str(e)}"}), 500
+            return jsonify({"error": "Sound file not found"}), 404
 
-if __name__ == '__main__':
-    # Verify audio players are available
-    try:
-        subprocess.run(["aplay", "--version"], check=True, capture_output=True)
-        print("aplay is available")
-    except:
-        print("Warning: aplay not found - WAV files won't play")
-    
-    try:
-        subprocess.run(["mpg123", "--version"], check=True, capture_output=True)
-        print("mpg123 is available")
-    except:
-        print("Warning: mpg123 not found - MP3 files won't play")
-    
-    app.run(host="0.0.0.0", port=5001, debug=True)
+        mixer.init()
+        mixer.music.load(sound_path)
+        mixer.music.play()
+
+        # Wait until playback is done
+        while mixer.music.get_busy():
+            time.sleep(0.1)
+
+        return jsonify({"message": f"Sound '{sound_name}' played successfully"})
+    except Exception as e:
+        print(f"[ERROR] Could not play sound: {e}")
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001)

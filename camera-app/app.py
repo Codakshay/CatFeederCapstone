@@ -5,8 +5,10 @@ from picamera2.encoders import MJPEGEncoder
 from picamera2.outputs import FileOutput
 from threading import Condition
 import logging
+from flask_cors import CORS  # Add CORS support
 
 app = Flask(__name__)
+CORS(app)  # This enables CORS for all routes
 
 # Stream MJPEG
 class StreamingOutput(io.BufferedIOBase):
@@ -39,20 +41,29 @@ def generate_frames(output):
 
 @app.route('/mjpeg')
 def mjpeg():
+    # Start the camera stream
     output = StreamingOutput()
     picam2.start_recording(MJPEGEncoder(), FileOutput(output))
 
+    # Define stop function to clean up the stream when done
     def stop():
         print("Stopping recording")
         picam2.stop_recording()
         picam2.close()
 
+    # Return MJPEG response for streaming video to the frontend
     return Response(generate_frames(output),
                     content_type="multipart/x-mixed-replace; boundary=frame")
 
-if __name__ == '__main__':
-    picam2 = Picamera2()
-    video_config = picam2.create_video_configuration(main={"size": (1920, 1080)})
-    picam2.configure(video_config)
-    app.run(host='0.0.0.0', port=8080)
 
+if __name__ == '__main__':
+    try:
+        # Initialize the camera
+        picam2 = Picamera2()
+        video_config = picam2.create_video_configuration(main={"size": (1920, 1080)})
+        picam2.configure(video_config)
+
+        # Start the Flask server
+        app.run(host='0.0.0.0', port=8080)
+    except Exception as e:
+        logging.error(f"Error during Flask app initialization: {str(e)}")

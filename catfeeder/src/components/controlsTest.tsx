@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { time } from "console";
+import { useState, useEffect, useRef } from "react";
 
 // Define a feeder interface and list of feeders.
 interface Feeder {
@@ -15,8 +16,8 @@ type feedEntry = {
 };
 
 const feeders: Feeder[] = [
-  { id: "feeder1", name: "Feeder 1", baseUrl: "http://172.16.11.106:3000" },
-  { id: "feeder2", name: "Feeder 2", baseUrl: "http://10.0.0.16:3000" },
+  { id: "feeder1", name: "Feeder 1", baseUrl: "http://172.16.11.163:3000" }, //"http://127.0.1.1:3000"
+  { id: "feeder2", name: "Feeder 2", baseUrl: "http://192.168.0.32:3000" },
 ];
 
 // Helper: Convert 24-hour time (e.g. "14:15") to 12-hour time with AM/PM.
@@ -45,6 +46,9 @@ export default function Controls() {
   const [selectedFeeder, setSelectedFeeder] = useState<Feeder>(feeders[0]);
   const [brightness, setBrightness] = useState(0);
   const [feedingHistory, setFeedingHistory] = useState<feedEntry[]>([]);
+  const [scheduleLoaded, setScheduleLoaded] = useState(false);
+  const timeoutIdsRef = useRef<NodeJS.Timeout[]>([])
+
 
   // Daily schedule: keys are "HH:MM" (24-hour format), one per hour.
   const [hourSchedule, setHourSchedule] = useState<Record<string, boolean>>(() => {
@@ -88,9 +92,45 @@ export default function Controls() {
   async function getFeedingHistory() {
     const response = await fetch('/api/feedhistory');
     const data = await response.json();
+    // sort list so latest is on top
+    data.items.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     setFeedingHistory(data.items); // [{ timestamp, feeder }, ...]
   }
+  
+  // Saves list of scheduled hours and custom times
+  async function saveSchedule(hourSchedule: string[], customSchedule: string[]) {
+    const response = await fetch('/api/feedschedule', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({"hourSchedule": hourSchedule, "customSchedule": customSchedule })
+    });
+  
+    const data = await response.json();
+    console.log(data);
+  }
 
+  async function loadSchedule() {
+    const response = await fetch('/api/feedschedule');
+    const data = await response.json()
+    // response data should look like
+    // {
+    //   hourSchedule: string[];
+    //   customSchedule: string[];
+    //   savedAt: string | null;
+    // }
+    setHourSchedule((prev) => {
+      const newSchedule: Record<string,boolean> = {};
+      for (const time of Object.keys(prev)) {
+        newSchedule[time] = data.hourSchedule.includes(time);
+      }
+      return newSchedule;
+    });
+    setCustomTimes(data.customSchedule);
+    setScheduleLoaded(true);
+    
+  }
   // Log the dispensing action.
   const logDispense = () => {
     const timestamp = new Date().toLocaleTimeString([], {
@@ -110,15 +150,23 @@ export default function Controls() {
   // Fetch history items when component loads
   useEffect(() => {
     getFeedingHistory();
+    loadSchedule();
   }, []);
+  
+  useEffect(() => {
+    if (scheduleLoaded) {
+      console.log("Finished loading schedule stuff")
+      scheduleDispenses();
+    }
+  }, [scheduleLoaded]);
 
-  // Dispense: Turn motor on then off after 3 seconds.
+  // Dispense: Turn motor on then off after 1.5 seconds.
   const dispense = () => {
     updateMotorSpeed(100);
     logDispense();
     setTimeout(() => {
       updateMotorSpeed(0);
-    }, 3000);
+    }, 1000);
   };
 
   // Compute delay (in ms) until next occurrence of a given time ("HH:MM").
@@ -133,6 +181,17 @@ export default function Controls() {
     return scheduled.getTime() - now.getTime();
   };
 
+  // Update Schedule
+  const updateSchedule = () => {
+    const hoursToSchedule = [
+      ...Object.entries(hourSchedule)
+        .filter(([time,active]) => active)
+        .map(([time]) => time)
+    ];
+    saveSchedule(hoursToSchedule, customTimes);
+    scheduleDispenses();
+  }
+
   // Schedule dispenses for all selected times.
   const scheduleDispenses = () => {
     const timesToSchedule = [
@@ -142,15 +201,20 @@ export default function Controls() {
       ...customTimes,
     ];
 
+    timeoutIdsRef.current.forEach((id) => clearTimeout(id));
+    timeoutIdsRef.current = [];
+
+
     timesToSchedule.forEach((timeStr) => {
       const delay = computeDelay(timeStr);
       console.log(`Scheduling dispense at ${timeStr} in ${delay} ms`);
-      setTimeout(() => {
+      const id = setTimeout(() => {
         console.log(`Dispensing at ${timeStr}`);
         dispense();
       }, delay);
+      timeoutIdsRef.current.push(id);
     });
-    alert("Dispense schedule updated.");
+    //alert("Dispense schedule updated.");
   };
 
   // Toggle daily schedule checkbox.
@@ -208,7 +272,7 @@ export default function Controls() {
       setSoundError(null);
 
       try {
-        const response = await fetch("http://10.0.0.25:5001/api/get-sounds");
+        const response = await fetch("http://172.16.11.163:5001/api/get-sounds"); //Change IP here
         const data: SoundResponse = await response.json();
 
         if (!response.ok) {
@@ -238,22 +302,23 @@ export default function Controls() {
       setSoundError("Please select a sound first");
       return;
     }
-
+  
     setPlayStatus(null);
     setSoundError(null);
-
+  
     try {
+      // Ensure that the sound name is URL-encoded
       const response = await fetch(
-        `${selectedFeeder.baseUrl}/api/play-sound/${encodeURIComponent(selectedSound)}`,
+        `http://172.16.11.163:5001/api/play-sound/${encodeURIComponent(selectedSound)}`, //Change IP here
         { method: "POST" }
       );
-
+  
       const data: SoundResponse = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(data.error || "Failed to play sound");
       }
-
+  
       setPlayStatus(data.message || "Sound played successfully");
       console.log("Sound played:", data.message);
     } catch (error) {
@@ -262,7 +327,7 @@ export default function Controls() {
       setPlayStatus(null);
     }
   };
-
+  
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-orange-50 rounded-lg shadow-md border border-orange-200">
       {/* Feeder Selection */}
@@ -382,7 +447,7 @@ export default function Controls() {
           {/* Update Schedule */}
           <div className="mb-6">
             <button
-              onClick={scheduleDispenses}
+              onClick={updateSchedule}
               className="w-full px-6 py-3 bg-orange-700 hover:bg-orange-800 text-white font-medium rounded-full shadow"
             >
               Update Dispense Schedule
@@ -396,8 +461,8 @@ export default function Controls() {
               <ul className="max-h-40 overflow-y-auto space-y-1 border border-orange-200 p-2 rounded">
                 {feedingHistory.map((entry, index) => (
                   <li key={index} className="text-sm text-orange-800">
-                    {entry.timestamp}
-                    {entry.feeder}
+                    <div>{new Date(entry.timestamp).toLocaleString("en-US", {dateStyle: "short", timeStyle: "short"}).replace(",", "")}
+                    &nbsp;{entry.feeder}</div>
 
                   </li>
                 ))}
@@ -427,7 +492,7 @@ export default function Controls() {
           </h3>
           <div className="w-full h-80 bg-orange-200 rounded-lg flex items-center justify-center border border-orange-400">
             <img
-              src="http://172.16.11.106:8080/mjpeg"
+              src="http://172.16.11.163:8080/mjpeg" //Change IP here 
               alt="Live Camera Feed"
               className="w-full h-full object-cover rounded-lg"
             />
